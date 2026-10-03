@@ -1,0 +1,2547 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hakerlar qanday aldashadi? — 10 Darslik Kiber-Qalqon Akademiyasi</title>
+  <meta name="description" content="8–14 yoshli bolalar va o'smirlar uchun 10 ta interaktiv o'yin va slaydli kiber-xavfsizlik o'quv platformasi.">
+  <style>
+    /* ==========================================================================
+       1. GLOBAL DESIGN SYSTEM & VARIABLES
+       ========================================================================== */
+    :root {
+      --bg-dark: #070b16;
+      --bg-card: rgba(15, 23, 46, 0.92);
+      --bg-card-hover: rgba(24, 36, 70, 0.95);
+      --bg-glass: rgba(255, 255, 255, 0.05);
+      --border-cyan: rgba(0, 242, 254, 0.35);
+      --border-glow: rgba(0, 242, 254, 0.6);
+      
+      --cyan: #00f2fe;
+      --cyan-dark: #00a8b5;
+      --neon-purple: #9d4edd;
+      --neon-pink: #ff2a85;
+      --emerald: #00f5a0;
+      --emerald-dark: #00b377;
+      --amber: #ffd166;
+      --amber-dark: #e09f00;
+      --crimson: #ff3366;
+      --crimson-dark: #cc0033;
+      
+      --text-white: #ffffff;
+      --text-dim: #94a3b8;
+      --text-bright: #e2e8f0;
+      
+      --font-main: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Outfit', 'Inter', sans-serif;
+      --radius-sm: 10px;
+      --radius-md: 18px;
+      --radius-lg: 26px;
+      --radius-full: 9999px;
+      
+      --shadow-cyan: 0 0 25px rgba(0, 242, 254, 0.35);
+      --shadow-purple: 0 0 25px rgba(157, 78, 221, 0.4);
+      --shadow-emerald: 0 0 25px rgba(0, 245, 160, 0.4);
+      --shadow-crimson: 0 0 25px rgba(255, 51, 102, 0.4);
+      --shadow-card: 0 15px 35px rgba(0, 0, 0, 0.55);
+      
+      --transition-fast: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      --transition-normal: 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+      --transition-bounce: 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow-x: hidden;
+      background-color: var(--bg-dark);
+      font-family: var(--font-main);
+      color: var(--text-white);
+      line-height: 1.5;
+      user-select: none;
+    }
+
+    body {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      position: relative;
+      background: radial-gradient(circle at 50% 10%, #151e3f 0%, #070b16 70%);
+    }
+
+    /* Cyber grid overlay */
+    .cyber-grid {
+      position: fixed;
+      inset: 0;
+      background-image: 
+        linear-gradient(rgba(0, 242, 254, 0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 242, 254, 0.04) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    #particles-canvas {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    #confetti-canvas {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 9999;
+    }
+
+    /* ==========================================================================
+       2. TOP BAR & CONTROLS
+       ========================================================================== */
+    .app-header {
+      position: relative;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 20px;
+      background: rgba(11, 17, 34, 0.9);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border-cyan);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+    }
+
+    .brand-icon {
+      width: 40px;
+      height: 40px;
+      filter: drop-shadow(0 0 10px var(--cyan));
+      animation: pulse-glow 3s infinite alternate;
+    }
+
+    .brand-title {
+      font-size: 1.2rem;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      background: linear-gradient(135deg, #fff 30%, var(--cyan) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-transform: uppercase;
+    }
+
+    .brand-badge {
+      font-size: 0.68rem;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: var(--radius-full);
+      background: rgba(0, 242, 254, 0.15);
+      border: 1px solid var(--cyan);
+      color: var(--cyan);
+      letter-spacing: 1px;
+    }
+
+    .header-controls {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .xp-meter {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(0, 0, 0, 0.5);
+      border: 1px solid var(--amber);
+      padding: 5px 12px;
+      border-radius: var(--radius-full);
+      box-shadow: 0 0 12px rgba(255, 209, 102, 0.25);
+    }
+
+    .xp-icon {
+      font-size: 1rem;
+      animation: bounce 2s infinite ease-in-out;
+    }
+
+    .xp-label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--amber);
+      text-transform: uppercase;
+    }
+
+    .xp-value {
+      font-size: 0.95rem;
+      font-weight: 800;
+      color: #fff;
+    }
+
+    .btn-icon {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: var(--text-bright);
+      width: 40px;
+      height: 40px;
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: var(--transition-fast);
+      font-size: 1.15rem;
+    }
+
+    .btn-icon:hover, .btn-icon:focus-visible {
+      background: rgba(0, 242, 254, 0.2);
+      border-color: var(--cyan);
+      color: var(--cyan);
+      transform: translateY(-2px);
+      box-shadow: 0 0 15px rgba(0, 242, 254, 0.3);
+      outline: none;
+    }
+
+    .btn-icon:active { transform: scale(0.95); }
+
+    .btn-quick-cert {
+      background: linear-gradient(135deg, var(--amber-dark), var(--amber));
+      color: #0b1736;
+      font-weight: 800;
+      font-size: 0.8rem;
+      padding: 7px 14px;
+      border-radius: var(--radius-full);
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 0 15px rgba(255, 209, 102, 0.4);
+      transition: var(--transition-fast);
+    }
+
+    .btn-quick-cert:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 20px rgba(255, 209, 102, 0.7);
+    }
+
+    /* Progress bar */
+    .progress-bar-container {
+      position: relative;
+      z-index: 9;
+      height: 5px;
+      background: rgba(255, 255, 255, 0.1);
+      width: 100%;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--neon-purple), var(--cyan), var(--emerald));
+      width: 10%;
+      transition: width 0.4s ease;
+      box-shadow: 0 0 12px var(--cyan);
+    }
+
+    /* Main presentation container */
+    .app-main {
+      flex: 1;
+      position: relative;
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 14px;
+      max-width: 1320px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .slide {
+      display: none;
+      width: 100%;
+      animation: slideFadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .slide.active { display: block; }
+
+    @keyframes slideFadeIn {
+      from { opacity: 0; transform: translateY(14px) scale(0.98); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .slide-card {
+      background: var(--bg-card);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--border-cyan);
+      border-radius: var(--radius-lg);
+      padding: 24px 28px;
+      box-shadow: var(--shadow-card);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .slide-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, transparent, var(--cyan), transparent);
+    }
+
+    .slide-header {
+      text-align: center;
+      margin-bottom: 18px;
+      position: relative;
+    }
+
+    .slide-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(0, 242, 254, 0.12);
+      border: 1px solid var(--cyan);
+      color: var(--cyan);
+      padding: 3px 12px;
+      border-radius: var(--radius-full);
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+
+    .slide-title {
+      font-size: clamp(1.35rem, 2.8vw, 1.95rem);
+      font-weight: 900;
+      color: #fff;
+      margin-bottom: 4px;
+      text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+    }
+
+    .slide-desc {
+      font-size: clamp(0.9rem, 1.6vw, 1.05rem);
+      color: var(--text-dim);
+      max-width: 840px;
+      margin: 0 auto;
+      font-weight: 400;
+    }
+
+    .highlight-yellow { color: var(--amber); font-weight: 700; }
+    .highlight-cyan { color: var(--cyan); font-weight: 700; }
+    .highlight-crimson { color: var(--crimson); font-weight: 700; }
+    .highlight-emerald { color: var(--emerald); font-weight: 700; }
+
+    /* ==========================================================================
+       3. SLIDE 1: INTRO & 4 PSYCHOLOGICAL TRIGGERS
+       ========================================================================== */
+    .slide-1-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.35fr;
+      gap: 20px;
+      align-items: center;
+    }
+
+    .character-stage {
+      background: rgba(7, 11, 22, 0.75);
+      border: 2px dashed var(--border-cyan);
+      border-radius: var(--radius-md);
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      min-height: 380px;
+      transition: var(--transition-normal);
+    }
+
+    .character-stage.hacker-mode {
+      border-color: var(--crimson);
+      background: rgba(30, 8, 16, 0.8);
+      box-shadow: inset 0 0 30px rgba(255, 51, 102, 0.25);
+    }
+
+    .character-avatar-wrap {
+      position: relative;
+      width: 155px;
+      height: 155px;
+      margin-bottom: 14px;
+    }
+
+    .character-svg {
+      width: 100%;
+      height: 100%;
+      transition: var(--transition-bounce);
+      filter: drop-shadow(0 0 15px rgba(0, 242, 254, 0.4));
+    }
+
+    .hacker-mode .character-svg { filter: drop-shadow(0 0 20px rgba(255, 51, 102, 0.6)); }
+
+    .character-speech {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: var(--radius-md);
+      padding: 10px 14px;
+      font-size: 0.92rem;
+      font-weight: 600;
+      text-align: center;
+      max-width: 280px;
+      margin-bottom: 14px;
+      position: relative;
+    }
+
+    .btn-persona-toggle {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: linear-gradient(135deg, var(--neon-purple), var(--cyan-dark));
+      border: none;
+      color: white;
+      font-weight: 800;
+      font-size: 0.92rem;
+      padding: 10px 20px;
+      border-radius: var(--radius-full);
+      cursor: pointer;
+      box-shadow: 0 5px 20px rgba(157, 78, 221, 0.4);
+      transition: var(--transition-bounce);
+    }
+
+    .btn-persona-toggle:hover { transform: scale(1.04); }
+
+    .triggers-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .trigger-card {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: var(--radius-md);
+      padding: 12px 16px;
+      cursor: pointer;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      transition: var(--transition-normal);
+    }
+
+    .trigger-card:hover {
+      background: rgba(0, 242, 254, 0.08);
+      border-color: var(--cyan);
+      transform: translateX(4px);
+    }
+
+    .trigger-card.unlocked {
+      border-color: var(--emerald);
+      background: rgba(0, 245, 160, 0.1);
+    }
+
+    .trigger-icon-box {
+      width: 44px;
+      height: 44px;
+      border-radius: var(--radius-sm);
+      background: rgba(0, 242, 254, 0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      flex-shrink: 0;
+      border: 1px solid var(--border-cyan);
+    }
+
+    .trigger-info h4 { font-size: 0.98rem; font-weight: 700; color: #fff; margin-bottom: 2px; }
+    .trigger-info p { font-size: 0.85rem; color: var(--text-dim); }
+
+    .trigger-reveal {
+      font-size: 0.82rem;
+      color: var(--amber);
+      font-weight: 600;
+      margin-top: 5px;
+      display: none;
+      background: rgba(0, 0, 0, 0.35);
+      padding: 5px 8px;
+      border-radius: var(--radius-sm);
+      border-left: 3px solid var(--amber);
+    }
+
+    .trigger-card.unlocked .trigger-reveal { display: block; animation: fadeIn 0.3s ease; }
+
+    /* ==========================================================================
+       4. SLIDE 2: PHISHING LURE & CUTTING LAB
+       ========================================================================== */
+    .phishing-interactive-stage {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      align-items: stretch;
+    }
+
+    .fishing-ocean-box {
+      background: linear-gradient(180deg, #0b1736 0%, #050d1e 100%);
+      border: 1px solid var(--border-cyan);
+      border-radius: var(--radius-md);
+      padding: 18px;
+      position: relative;
+      min-height: 400px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow: hidden;
+    }
+
+    .fishing-rod-wrap {
+      position: absolute;
+      top: 10px;
+      right: 15px;
+      width: 160px;
+      height: 110px;
+      pointer-events: none;
+    }
+
+    .fishing-line {
+      stroke: var(--cyan);
+      stroke-width: 2;
+      stroke-dasharray: 4;
+      animation: dash 1s linear infinite;
+    }
+
+    @keyframes dash { to { stroke-dashoffset: -8; } }
+
+    .baits-container {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 30px;
+      z-index: 3;
+    }
+
+    .bait-item {
+      background: rgba(255, 255, 255, 0.07);
+      border: 2px solid rgba(255, 255, 255, 0.15);
+      border-radius: var(--radius-md);
+      padding: 10px 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      transition: var(--transition-bounce);
+      position: relative;
+    }
+
+    .bait-item:hover {
+      background: rgba(255, 209, 102, 0.15);
+      border-color: var(--amber);
+      transform: scale(1.02) translateX(3px);
+    }
+
+    .bait-item.selected {
+      border-color: var(--crimson);
+      background: rgba(255, 51, 102, 0.15);
+      box-shadow: var(--shadow-crimson);
+    }
+
+    .bait-item.cleared {
+      border-color: var(--emerald);
+      background: rgba(0, 245, 160, 0.15);
+      opacity: 0.85;
+    }
+
+    .bait-icon { font-size: 1.5rem; }
+    .bait-text h5 { font-size: 0.92rem; font-weight: 700; color: #fff; }
+    .bait-text span { font-size: 0.75rem; color: var(--amber); }
+
+    .bait-hook-tag {
+      margin-left: auto;
+      font-size: 0.7rem;
+      font-weight: 800;
+      background: rgba(255, 51, 102, 0.2);
+      color: var(--crimson);
+      padding: 3px 6px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--crimson);
+      display: none;
+    }
+
+    .bait-item.selected .bait-hook-tag { display: block; }
+
+    .phishing-scanner-box {
+      background: rgba(11, 17, 34, 0.92);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: var(--radius-md);
+      padding: 20px;
+      min-height: 400px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      text-align: center;
+    }
+
+    .scanner-active-content { display: none; text-align: left; }
+    .scanner-active-content.show { display: block; animation: fadeIn 0.3s ease; }
+
+    .hook-alert-box {
+      background: rgba(255, 51, 102, 0.12);
+      border: 1px solid var(--crimson);
+      border-radius: var(--radius-sm);
+      padding: 12px;
+      margin: 12px 0;
+    }
+
+    .hook-alert-title {
+      color: var(--crimson);
+      font-weight: 800;
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 4px;
+    }
+
+    .btn-shield-cut {
+      width: 100%;
+      background: linear-gradient(135deg, var(--emerald-dark), var(--cyan));
+      border: none;
+      color: #041b17;
+      font-size: 0.95rem;
+      font-weight: 800;
+      padding: 12px;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      box-shadow: var(--shadow-emerald);
+      transition: var(--transition-bounce);
+    }
+
+    /* ==========================================================================
+       5. SLIDE 3: DOMAIN DETECTIVE & MULTI-SITE LAB
+       ========================================================================== */
+    .site-selector-tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 14px;
+      justify-content: center;
+    }
+
+    .site-tab-btn {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: var(--text-dim);
+      padding: 6px 14px;
+      border-radius: var(--radius-full);
+      font-size: 0.85rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: var(--transition-fast);
+    }
+
+    .site-tab-btn.active {
+      background: rgba(0, 242, 254, 0.2);
+      border-color: var(--cyan);
+      color: #fff;
+      box-shadow: 0 0 15px rgba(0, 242, 254, 0.35);
+    }
+
+    .browser-comparator-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .browser-mockup {
+      background: #0d1424;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+      position: relative;
+    }
+
+    .browser-mockup.fake-browser { border-color: rgba(255, 51, 102, 0.45); }
+    .browser-mockup.real-browser { border-color: rgba(0, 245, 160, 0.45); }
+
+    .browser-header-bar {
+      background: #16223b;
+      padding: 8px 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .browser-dots { display: flex; gap: 4px; }
+    .dot { width: 8px; height: 8px; border-radius: 50%; }
+    .dot-red { background: #ff5f56; }
+    .dot-yellow { background: #ffbd2e; }
+    .dot-green { background: #27c93f; }
+
+    .browser-url-bar {
+      flex: 1;
+      background: #0b101d;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: var(--radius-full);
+      padding: 5px 12px;
+      font-size: 0.8rem;
+      font-family: monospace;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      position: relative;
+    }
+
+    .browser-content {
+      padding: 16px 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      min-height: 250px;
+    }
+
+    .mock-login-box {
+      width: 100%;
+      max-width: 260px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 6px;
+    }
+
+    .mock-input {
+      background: #080d1a;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      border-radius: var(--radius-sm);
+      padding: 9px 12px;
+      font-size: 0.84rem;
+      color: #cbd5e1;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      text-align: left;
+    }
+
+    .mock-btn {
+      background: #0095f6;
+      border: none;
+      color: white;
+      font-weight: 700;
+      padding: 10px 14px;
+      border-radius: var(--radius-sm);
+      font-size: 0.85rem;
+      cursor: pointer;
+      width: 100%;
+      text-align: center;
+      transition: var(--transition-fast);
+    }
+
+    .mock-btn:hover {
+      opacity: 0.9;
+      transform: translateY(-1px);
+    }
+
+    .fake-warning-banner {
+      background: rgba(255, 51, 102, 0.18);
+      border: 1px solid var(--crimson);
+      color: #ff99b0;
+      font-size: 0.78rem;
+      font-weight: 700;
+      padding: 7px 12px;
+      border-radius: var(--radius-sm);
+      width: 100%;
+      max-width: 280px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 6px;
+      position: relative;
+      animation: pulse-warn 1.5s infinite;
+    }
+
+    .fake-timer-badge {
+      background: var(--crimson);
+      color: #fff;
+      font-weight: 900;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-family: monospace;
+      letter-spacing: 0.5px;
+    }
+
+    .detective-clue-marker {
+      position: absolute;
+      width: 26px;
+      height: 26px;
+      background: var(--amber);
+      color: #000;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.82rem;
+      font-weight: 900;
+      cursor: pointer;
+      box-shadow: 0 0 15px var(--amber);
+      animation: bounce 1.5s infinite;
+      z-index: 10;
+    }
+
+    .clue-marker-1 { top: 6px; left: 165px; }
+    .clue-marker-2 { top: 6px; left: 35px; }
+    .clue-marker-3 { position: absolute; left: -14px; top: 50%; transform: translateY(-50%); }
+    .clue-marker-4 { position: absolute; right: -12px; top: 50%; transform: translateY(-50%); }
+    .clue-marker.found { background: var(--emerald); box-shadow: 0 0 15px var(--emerald); animation: none; }
+
+    /* ==========================================================================
+       6. SLIDE 4: PASSWORD CASTLE BUILDER
+       ========================================================================== */
+    .password-lab-grid {
+      display: grid;
+      grid-template-columns: 1.1fr 1fr;
+      gap: 20px;
+      align-items: center;
+    }
+
+    .password-controls-box {
+      background: rgba(11, 17, 34, 0.85);
+      border: 1px solid var(--border-cyan);
+      border-radius: var(--radius-md);
+      padding: 20px;
+    }
+
+    .pwd-input-wrap {
+      display: flex;
+      gap: 10px;
+      margin: 12px 0;
+    }
+
+    .pwd-input-field {
+      flex: 1;
+      background: #060a14;
+      border: 2px solid var(--cyan);
+      border-radius: var(--radius-sm);
+      padding: 10px 14px;
+      color: #fff;
+      font-size: 1rem;
+      font-family: monospace;
+      outline: none;
+    }
+
+    .pwd-presets {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .btn-pwd-preset {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: var(--text-bright);
+      padding: 6px 12px;
+      border-radius: var(--radius-full);
+      font-size: 0.8rem;
+      cursor: pointer;
+    }
+
+    .castle-visual-box {
+      background: linear-gradient(180deg, #101a38, #070c1a);
+      border: 2px solid rgba(0, 242, 254, 0.3);
+      border-radius: var(--radius-md);
+      padding: 24px;
+      text-align: center;
+      position: relative;
+    }
+
+    .castle-icon { font-size: 4rem; margin-bottom: 8px; transition: var(--transition-bounce); }
+    .castle-meter-bar {
+      height: 14px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: var(--radius-full);
+      overflow: hidden;
+      margin: 12px 0;
+    }
+    .castle-meter-fill {
+      height: 100%;
+      width: 15%;
+      background: var(--crimson);
+      transition: width 0.4s ease, background 0.4s ease;
+    }
+
+    /* ==========================================================================
+       7. SLIDE 5: TWO-FACTOR AUTHENTICATION (2FA VAULT)
+       ========================================================================== */
+    .twofa-stage-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      align-items: center;
+    }
+
+    .vault-box {
+      background: #091124;
+      border: 2px solid var(--border-cyan);
+      border-radius: var(--radius-md);
+      padding: 24px;
+      text-align: center;
+      min-height: 350px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .vault-door-icon { font-size: 4.5rem; margin-bottom: 10px; }
+    .twofa-toggle-card {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: var(--radius-md);
+      padding: 20px;
+    }
+
+    /* ==========================================================================
+       8. SLIDE 6: PUBLIC WI-FI SNIFFER LAB
+       ========================================================================== */
+    .wifi-stage-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      align-items: center;
+    }
+
+    .wifi-packet-stream {
+      background: #070d1e;
+      border: 1px solid rgba(0, 242, 254, 0.3);
+      border-radius: var(--radius-md);
+      padding: 20px;
+      min-height: 320px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-around;
+    }
+
+    .packet-card {
+      background: rgba(255, 51, 102, 0.15);
+      border: 1px solid var(--crimson);
+      padding: 10px 14px;
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-family: monospace;
+      font-size: 0.88rem;
+    }
+
+    .packet-card.secured {
+      background: rgba(0, 245, 160, 0.15);
+      border-color: var(--emerald);
+      color: #a7f3d0;
+    }
+
+    /* ==========================================================================
+       9. SLIDE 7: TROJAN HORSE & MALICIOUS APKS
+       ========================================================================== */
+    .trojan-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+
+    .apk-card {
+      background: rgba(255, 255, 255, 0.05);
+      border: 2px solid rgba(255, 255, 255, 0.15);
+      border-radius: var(--radius-md);
+      padding: 18px;
+      text-align: center;
+      cursor: pointer;
+      transition: var(--transition-bounce);
+    }
+
+    .apk-card:hover { transform: translateY(-4px); border-color: var(--cyan); }
+    .apk-card.infected { border-color: var(--crimson); background: rgba(255, 51, 102, 0.15); }
+    .apk-card.clean { border-color: var(--emerald); background: rgba(0, 245, 160, 0.15); }
+
+    /* ==========================================================================
+       10. SLIDE 8: SMARTPHONE SIMULATOR (5 SCENARIOS)
+       ========================================================================== */
+    .phone-simulator-container {
+      max-width: 650px;
+      margin: 0 auto;
+      background: #0d1322;
+      border: 3px solid rgba(0, 242, 254, 0.4);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      box-shadow: 0 0 35px rgba(0, 242, 254, 0.25);
+    }
+
+    .phone-status-bar {
+      background: #080d1a;
+      padding: 8px 16px;
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.75rem;
+      color: var(--text-dim);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .message-card-wrapper {
+      padding: 20px 24px;
+      min-height: 230px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .sms-bubble {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      margin-bottom: 12px;
+    }
+
+    .decision-buttons {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      padding: 0 24px 20px;
+    }
+
+    .btn-decision {
+      padding: 14px;
+      font-size: 0.95rem;
+      font-weight: 800;
+      border-radius: var(--radius-md);
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: var(--transition-bounce);
+      min-height: 50px;
+    }
+
+    .btn-danger-scam { background: linear-gradient(135deg, #ff0055, #c70039); color: white; }
+    .btn-safe-trust { background: linear-gradient(135deg, #00d26a, #00a859); color: white; }
+
+    /* ==========================================================================
+       11. SLIDE 9: CYBER HYGIENE 6 GOLDEN RULES
+       ========================================================================== */
+    .hygiene-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+
+    .hygiene-card {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      text-align: center;
+      cursor: pointer;
+      transition: var(--transition-bounce);
+    }
+
+    .hygiene-card:hover { transform: scale(1.03); border-color: var(--cyan); }
+    .hygiene-card.flipped { border-color: var(--emerald); background: rgba(0, 245, 160, 0.12); }
+
+    /* ==========================================================================
+       12. SLIDE 10: QUIZ & CERTIFICATE GENERATOR
+       ========================================================================== */
+    .quiz-container {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      max-width: 820px;
+      margin: 0 auto;
+    }
+
+    .quiz-question-box {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border-cyan);
+      border-radius: var(--radius-md);
+      padding: 16px 20px;
+    }
+
+    .question-title {
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .question-options { display: flex; flex-direction: column; gap: 6px; }
+
+    .quiz-opt-btn {
+      background: rgba(255, 255, 255, 0.07);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: var(--radius-sm);
+      padding: 10px 14px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #fff;
+      text-align: left;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transition: var(--transition-fast);
+      min-height: 44px;
+    }
+
+    .quiz-opt-btn:hover { background: rgba(0, 242, 254, 0.15); border-color: var(--cyan); }
+    .quiz-opt-btn.correct { background: rgba(0, 245, 160, 0.25) !important; border-color: var(--emerald) !important; color: #fff !important; }
+    .quiz-opt-btn.wrong { background: rgba(255, 51, 102, 0.25) !important; border-color: var(--crimson) !important; color: #fff !important; animation: shake 0.4s ease; }
+
+    .certificate-wrapper {
+      display: none;
+      margin-top: 14px;
+      background: linear-gradient(135deg, #0d1a3a, #060c1c);
+      border: 3px solid var(--amber);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      box-shadow: 0 0 40px rgba(255, 209, 102, 0.35);
+      text-align: center;
+      position: relative;
+    }
+
+    .certificate-wrapper.show { display: block; animation: zoomIn 0.5s ease; }
+
+    .cert-controls-form {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      max-width: 680px;
+      margin: 0 auto 16px;
+      justify-content: center;
+    }
+
+    .cert-input {
+      background: rgba(0, 0, 0, 0.5);
+      border: 2px solid var(--cyan);
+      border-radius: var(--radius-sm);
+      padding: 8px 12px;
+      font-size: 0.92rem;
+      color: #fff;
+      font-weight: 700;
+      outline: none;
+      flex: 1;
+      min-width: 180px;
+    }
+
+    .cert-preview-card {
+      background: linear-gradient(135deg, #091329, #040914);
+      border: 3px dashed rgba(255, 209, 102, 0.6);
+      border-radius: var(--radius-md);
+      padding: 22px;
+      margin-top: 12px;
+    }
+
+    .cert-user-name {
+      font-size: 2.1rem;
+      font-weight: 900;
+      color: #fff;
+      text-shadow: 0 0 15px var(--cyan);
+      margin: 6px 0;
+    }
+
+    .cert-rank-tag {
+      display: inline-block;
+      background: rgba(255, 209, 102, 0.15);
+      border: 1px solid var(--amber);
+      color: var(--amber);
+      padding: 4px 14px;
+      border-radius: var(--radius-full);
+      font-weight: 800;
+      font-size: 0.82rem;
+      margin-bottom: 8px;
+    }
+
+    .cert-actions-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      justify-content: center;
+      margin-top: 16px;
+    }
+
+    .btn-action-gold {
+      background: linear-gradient(135deg, #ffd166, #ffaa00);
+      color: #0b1736;
+      font-weight: 800;
+      padding: 12px 22px;
+      border-radius: var(--radius-full);
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.92rem;
+      box-shadow: 0 5px 20px rgba(255, 209, 102, 0.4);
+      transition: var(--transition-fast);
+    }
+
+    /* Footer Navigation */
+    .app-footer {
+      position: relative;
+      z-index: 10;
+      background: rgba(11, 17, 34, 0.9);
+      backdrop-filter: blur(14px);
+      border-top: 1px solid var(--border-cyan);
+      padding: 10px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .nav-dots { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+
+    .nav-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.2);
+      cursor: pointer;
+      transition: var(--transition-bounce);
+    }
+
+    .nav-dot.active { background: var(--cyan); transform: scale(1.3); box-shadow: 0 0 10px var(--cyan); }
+    .nav-dot.completed { background: var(--emerald); }
+
+    .btn-nav {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #fff;
+      font-weight: 700;
+      font-size: 0.9rem;
+      padding: 8px 16px;
+      border-radius: var(--radius-full);
+      cursor: pointer;
+      transition: var(--transition-fast);
+      min-height: 42px;
+    }
+
+    .btn-nav-primary {
+      background: linear-gradient(135deg, var(--cyan-dark), var(--cyan));
+      border: none;
+      color: #05141b;
+      font-weight: 800;
+    }
+
+    .btn-nav:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    /* Keyframes */
+    @keyframes pulse-glow { 0% { filter: drop-shadow(0 0 5px var(--cyan)); } 100% { filter: drop-shadow(0 0 15px var(--cyan)); } }
+    @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+    @keyframes shake { 0%, 100% { transform: translateX(0); } 20%, 60% { transform: translateX(-6px); } 40%, 80% { transform: translateX(6px); } }
+    @keyframes zoomIn { from { transform: scale(0.92); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      .slide-1-grid, .phishing-interactive-stage, .browser-comparator-grid, .password-lab-grid, .twofa-stage-grid, .wifi-stage-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+      }
+      .trojan-grid, .hygiene-grid { grid-template-columns: 1fr; }
+      .slide-card { padding: 16px 12px; }
+    }
+
+    /* Print styles */
+    @media print {
+      @page { size: A4 landscape; margin: 1cm; }
+      body { background: #fff !important; color: #000 !important; }
+      .app-header, .app-footer, .progress-bar-container, .cyber-grid, #particles-canvas, #confetti-canvas, .slide-header, .quiz-container, .cert-controls-form, .cert-actions-bar, button, .site-selector-tabs, .slide:not(#slide-10) {
+        display: none !important;
+      }
+      .app-main, .slide-card, .certificate-wrapper {
+        display: block !important;
+        background: #fff !important;
+        border: none !important;
+        box-shadow: none !important;
+        padding: 0 !important;
+      }
+      .cert-preview-card {
+        background: #fff !important;
+        border: 4px solid #d4af37 !important;
+        color: #000 !important;
+        padding: 30px !important;
+      }
+      .cert-user-name { color: #0b1736 !important; text-shadow: none !important; }
+      .cert-title, .cert-rank-tag { color: #b8860b !important; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="cyber-grid" aria-hidden="true"></div>
+  <canvas id="particles-canvas" aria-hidden="true"></canvas>
+  <canvas id="confetti-canvas" aria-hidden="true"></canvas>
+
+  <!-- ==========================================================================
+       HEADER BAR
+       ========================================================================== -->
+  <header class="app-header">
+    <div class="brand" onclick="goToSlide(0)" title="1-darsga qaytish">
+      <svg class="brand-icon" viewBox="0 0 100 100" fill="none">
+        <path d="M50 10 L85 25 V50 C85 75 50 92 50 92 C50 92 15 75 15 50 V25 Z" fill="url(#brandGrad)" stroke="#00f2fe" stroke-width="3"/>
+        <path d="M50 30 L65 45 L50 70 L35 45 Z" fill="#00f2fe" opacity="0.8"/>
+        <circle cx="50" cy="45" r="8" fill="#ffffff"/>
+        <defs>
+          <linearGradient id="brandGrad" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#151e3f"/>
+            <stop offset="100%" stop-color="#00f2fe" stop-opacity="0.3"/>
+          </linearGradient>
+        </defs>
+      </svg>
+      <div>
+        <div class="brand-title">KIBER-QALQON</div>
+        <div class="brand-badge">10 BOSQICHLI AKADEMIYA</div>
+      </div>
+    </div>
+
+    <div class="header-controls">
+      <div class="xp-meter" title="To'plangan tajriba ballari">
+        <span class="xp-icon">⚡</span>
+        <span class="xp-label">XP:</span>
+        <span class="xp-value" id="xp-counter">0 XP</span>
+      </div>
+
+      <button class="btn-quick-cert" onclick="openCertificateDirectly()" title="Oltin Sertifikatni ochish">
+        <span>🏆</span> <span>Sertifikat</span>
+      </button>
+
+      <button class="btn-icon" id="sound-toggle-btn" title="Ovoz">
+        <span id="sound-icon">🔊</span>
+      </button>
+
+      <button class="btn-icon" id="fullscreen-btn" title="To'liq ekran">
+        <span>⛶</span>
+      </button>
+
+      <button class="btn-icon" id="reset-btn" title="Qaytadan boshlash">
+        <span>🔄</span>
+      </button>
+    </div>
+  </header>
+
+  <div class="progress-bar-container">
+    <div class="progress-bar-fill" id="top-progress-fill"></div>
+  </div>
+
+  <!-- ==========================================================================
+       10 INTERACTIVE SLIDES
+       ========================================================================== -->
+  <main class="app-main">
+
+    <!-- SLIDE 1: HAKER VA IJTIMOIY MUHANDISLIK -->
+    <section class="slide active" id="slide-1" data-slide="0">
+      <div class="slide-card">
+        <div class="slide-header">
+          <div class="slide-tag">🕵️ 1-Dars: Ijtimoiy Muhandislik</div>
+          <h1 class="slide-title">Haker kim va u qanday aldashadi?</h1>
+          <p class="slide-desc">Hakerlar devorlarni buzmeydi — ular <span class="highlight-cyan">inson ishonchi va qo'rquvidan</span> foydalanadi!</p>
+        </div>
+
+        <div class="slide-1-grid">
+          <div class="character-stage" id="character-stage">
+            <div class="character-speech" id="character-speech">"Salom do'stim! Senga tekin o'yin sovg'am bor! 🎁"</div>
+            <div class="character-avatar-wrap">
+              <svg id="character-svg" class="character-svg" viewBox="0 0 200 200">
+                <g id="char-friendly-group">
+                  <circle cx="100" cy="100" r="75" fill="#4facfe"/>
+                  <circle cx="75" cy="85" r="10" fill="#fff"/><circle cx="75" cy="85" r="5" fill="#0b1736"/>
+                  <circle cx="125" cy="85" r="10" fill="#fff"/><circle cx="125" cy="85" r="5" fill="#0b1736"/>
+                  <path d="M70 120 Q100 150 130 120" stroke="#fff" stroke-width="6" fill="none" stroke-linecap="round"/>
+                  <path d="M50 65 Q100 25 150 65" stroke="#ffd166" stroke-width="12" fill="none" stroke-linecap="round"/>
+                </g>
+                <g id="char-hacker-group" style="display: none;">
+                  <path d="M30 170 Q100 20 170 170 Z" fill="#161b2e"/>
+                  <ellipse cx="100" cy="105" rx="55" ry="60" fill="#060913"/>
+                  <polygon points="65,95 85,90 85,100" fill="#ff3366"/>
+                  <polygon points="135,95 115,90 115,100" fill="#ff3366"/>
+                  <path d="M75 135 Q100 120 125 135" stroke="#ff3366" stroke-width="4" fill="none" stroke-linecap="round"/>
+                </g>
+              </svg>
+            </div>
+            <button class="btn-persona-toggle" id="btn-toggle-mask"><span>🎭</span> <span id="toggle-mask-text">Haqiqiy Qiyofani Ochish!</span></button>
+          </div>
+
+          <div class="triggers-panel">
+            <h3 style="font-size: 1.05rem; color: var(--cyan); margin-bottom: 2px;">🔍 4 ta psixologik tuzoqni bosing:</h3>
+            <div class="trigger-card" onclick="unlockTrigger(this, 20)">
+              <div class="trigger-icon-box">🎁</div>
+              <div class="trigger-info">
+                <h4>1. "Tekin Sovg'a" (Qiziqish)</h4>
+                <p>"Tekin iPhone 16 yoki 10,000 Robux yutib oling!"</p>
+                <div class="trigger-reveal">🛡️ <strong>Kiber-Qoida:</strong> Internetda tekin narsa bo'lmaydi. Bu parolni ilintirish tuzog'i!</div>
+              </div>
+            </div>
+            <div class="trigger-card" onclick="unlockTrigger(this, 20)">
+              <div class="trigger-icon-box">⏰</div>
+              <div class="trigger-info">
+                <h4>2. "Shoshiltirish" (Qo'rquv)</h4>
+                <p>"Hisobingiz 5 daqiqada bloklanadi, tezda parolni bering!"</p>
+                <div class="trigger-reveal">🛡️ <strong>Kiber-Qoida:</strong> Hakerlar sizni o'ylashga vaqt qoldirmaslik uchun shoshiltiradi!</div>
+              </div>
+            </div>
+            <div class="trigger-card" onclick="unlockTrigger(this, 20)">
+              <div class="trigger-icon-box">🤝</div>
+              <div class="trigger-info">
+                <h4>3. "Ishonchli Shaxs" (Obro')</h4>
+                <p>Do'stingiz, o'qituvchingiz yoki bank nomidan soxta profil ochishadi.</p>
+                <div class="trigger-reveal">🛡️ <strong>Kiber-Qoida:</strong> Har doim boshqa yo'l bilan qo'ng'iroq qilib aniqlang!</div>
+              </div>
+            </div>
+            <div class="trigger-card" onclick="unlockTrigger(this, 20)">
+              <div class="trigger-icon-box">🥺</div>
+              <div class="trigger-info">
+                <h4>4. "Yordam So'rash" (Hamdardlik)</h4>
+                <p>"Profilim bloklandi, telefoningizga kelgan kodni ayting..."</p>
+                <div class="trigger-reveal">🛡️ <strong>Kiber-Qoida:</strong> SMS kodni hatto eng yaqin do'stingizga ham bermang!</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 2: FISHING TUZOG'I -->
+    <section class="slide" id="slide-2" data-slide="1">
+      <div class="slide-card">
+        <div class="slide-header">
+          <div class="slide-tag">🎣 2-Dars: Fishing Qarmoqlari</div>
+          <h2 class="slide-title">"Fishing" Qarmoq Tuzog'i va Turlari</h2>
+          <p class="slide-desc">4 ta xavfli xo'rakni bosing, rentgen qiling va Lazer Qalqon bilan kesing!</p>
+        </div>
+
+        <div class="phishing-interactive-stage">
+          <div class="fishing-ocean-box">
+            <svg class="fishing-rod-wrap" viewBox="0 0 200 150">
+              <path d="M190 10 Q120 20 60 70" stroke="#ffd166" stroke-width="4" fill="none"/>
+              <path class="fishing-line" d="M60 70 L60 140" fill="none"/>
+              <path d="M60 140 Q60 155 45 155 Q30 155 35 135" stroke="#ff3366" stroke-width="4" fill="none"/>
+            </svg>
+            <div class="baits-container">
+              <div class="bait-item" onclick="inspectBait(1, this)"><div class="bait-icon">🎮</div><div class="bait-text"><h5>"5000 Robux / Brawl Gems Tekin!"</h5><span>O'yin fishingi</span></div><div class="bait-hook-tag">QOPQON!</div></div>
+              <div class="bait-item" onclick="inspectBait(2, this)"><div class="bait-icon">💳</div><div class="bait-text"><h5>"500,000 so'm moddiy yordam!"</h5><span>Bank kartasi fishingi</span></div><div class="bait-hook-tag">QOPQON!</div></div>
+              <div class="bait-item" onclick="inspectBait(3, this)"><div class="bait-icon">📦</div><div class="bait-text"><h5>"UzPost: Posilka to'lovi!"</h5><span>Yetkazib berish fishingi</span></div><div class="bait-hook-tag">QOPQON!</div></div>
+              <div class="bait-item" onclick="inspectBait(4, this)"><div class="bait-icon">🎁</div><div class="bait-text"><h5>"Sizga Telegram Premium yuborildi!"</h5><span>Akkaunt fishingi</span></div><div class="bait-hook-tag">QOPQON!</div></div>
+            </div>
+            <div style="font-size: 0.78rem; color: var(--text-dim); text-align: center;">👆 Xo'rakni tanlang va tahlil qiling!</div>
+          </div>
+
+          <div class="phishing-scanner-box">
+            <div id="scanner-idle-msg"><div style="font-size: 3rem; margin-bottom: 8px;">🔬</div><p>Xo'rakni tanlang. Kiber-Rentgen qanday ma'lumot o'g'irlanishini ko'rsatadi!</p></div>
+            <div id="scanner-active-content" class="scanner-active-content">
+              <h4 id="scanner-bait-title" style="font-size: 1.1rem; color: var(--amber); font-weight: 800;"></h4>
+              <div class="hook-alert-box"><div class="hook-alert-title"><span>🪝</span> Yashirin Haker Qarmog'i:</div><div class="hook-alert-desc" id="scanner-bait-desc"></div></div>
+              <button class="btn-shield-cut" id="btn-cut-line" onclick="cutPhishingLine()"><span>🛡️</span> <span>Lazer Qalqon bilan Qarmoqni Kesish! (+30 XP)</span></button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 3: SOXTA SAYTLAR VA DOMEN LUPA -->
+    <section class="slide" id="slide-3" data-slide="2">
+      <div class="slide-card">
+        <div class="slide-header">
+          <div class="slide-tag">🔍 3-Dars: Domen Detektivi</div>
+          <h2 class="slide-title">Soxta Saytni Fosh Qil! (Domain Detective)</h2>
+          <p class="slide-desc">Saytni tanlang va o'ng tarafdagi <span class="highlight-yellow">4 ta shubhali xavf belgisini</span> lupa orqali toping!</p>
+        </div>
+
+        <div class="site-selector-tabs">
+          <button class="site-tab-btn active" onclick="switchSiteTab(1, this)">📷 1. Instagram</button>
+          <button class="site-tab-btn" onclick="switchSiteTab(2, this)">✈️ 2. Telegram</button>
+          <button class="site-tab-btn" onclick="switchSiteTab(3, this)">💳 3. Click / Payme</button>
+        </div>
+
+        <div class="browser-comparator-grid">
+          <!-- Real Browser Mockup -->
+          <div class="browser-mockup real-browser">
+            <div class="browser-header-bar">
+              <div class="browser-dots"><span class="dot dot-red"></span><span class="dot dot-yellow"></span><span class="dot dot-green"></span></div>
+              <div class="browser-url-bar">
+                <span class="url-lock-icon lock-secure">🔒</span>
+                <span style="color: #a7f3d0;" id="real-browser-url">https://instagram.com</span>
+              </div>
+            </div>
+            <div class="browser-content">
+              <div style="font-size: 0.82rem; color: var(--emerald); font-weight: 800; margin-bottom: 8px;">✅ ASL HAQIQIY RASMIY SAYT</div>
+              <div class="mock-login-box">
+                <div class="mock-input"><span style="opacity: 0.6;">👤</span> <span id="real-input-1">Login yoki telefon</span></div>
+                <div class="mock-input"><span style="opacity: 0.6;">🔑</span> <span id="real-input-2">Maxfiy parol (••••••••)</span></div>
+                <button class="mock-btn" id="real-btn">Kirish</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Fake Browser Mockup with Clues -->
+          <div class="browser-mockup fake-browser" id="fake-browser-mockup">
+            <!-- 1. Clue Marker 1 on Domain -->
+            <div class="detective-clue-marker clue-marker-1" onclick="findClue(1, this)" title="1. Soxta Harf va Domen!">1</div>
+
+            <!-- 2. Clue Marker 2 on Missing Lock / HTTP -->
+            <div class="detective-clue-marker clue-marker-2" onclick="findClue(2, this)" title="2. Xavfsiz Qulf Yo'q!">2</div>
+
+            <div class="browser-header-bar">
+              <div class="browser-dots"><span class="dot dot-red"></span><span class="dot dot-yellow"></span><span class="dot dot-green"></span></div>
+              <div class="browser-url-bar" style="border-color: var(--crimson);">
+                <span class="insecure-url-tag" style="color: var(--crimson); font-weight: 800; font-size: 0.75rem;">⚠️ Xavfsiz emas:</span>
+                <span style="color: #ff85a1;" id="fake-browser-url">http://instagrarn-security.net</span>
+              </div>
+            </div>
+
+            <div class="browser-content">
+              <!-- 3. Clue Marker 3 on Fake Countdown Timer Banner -->
+              <div class="fake-warning-banner" id="fake-banner-box">
+                <div class="detective-clue-marker clue-marker-3" onclick="findClue(3, this)" title="3. Soxta Shoshiltiruvchi Taymer!">3</div>
+                <span class="fake-timer-badge" id="fake-timer-display">⏳ 04:59</span>
+                <span id="fake-banner-text">DIQQAT: Hisob 5 daqiqada o'chiriladi!</span>
+              </div>
+
+              <div class="mock-login-box">
+                <div class="mock-input"><span style="opacity: 0.6;">👤</span> <span id="fake-input-1">Login yoki telefon raqami</span></div>
+                
+                <!-- 4. Clue Marker 4 on Password Trap Field -->
+                <div class="mock-input password-trap-input" style="position: relative; border-color: var(--crimson); background: rgba(255,51,102,0.1);">
+                  <div class="detective-clue-marker clue-marker-4" onclick="findClue(4, this)" title="4. Parol O'g'irlash Maydoni!">4</div>
+                  <span>🔑</span> <span id="fake-input-2" style="color: #ffb3c6;">Maxfiy parolingizni kiriting</span>
+                </div>
+
+                <button class="mock-btn" style="background: var(--crimson); font-weight: 800;" id="fake-btn">TEZDA HISOBNI TIKLASH</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 12px; background: rgba(0,0,0,0.4); padding: 8px 16px; border-radius: var(--radius-sm);">
+          <span style="font-weight: 700; font-size: 0.92rem;">Topilgan xavflar: <span id="clues-found-count" style="color: var(--amber);">0</span> / 4</span>
+          <div style="display: flex; gap: 6px;"><span class="clue-pill" id="pill-1">1. Soxta Harf (rn)</span><span class="clue-pill" id="pill-2">2. Qulf Yo'q (http)</span><span class="clue-pill" id="pill-3">3. Soxta Taymer (04:59)</span><span class="clue-pill" id="pill-4">4. Parol Tuzog'i</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 4: PAROL QAL'ASI O'YINI -->
+    <section class="slide" id="slide-4" data-slide="3">
+      <div class="slide-card">
+        <div class="slide-header">
+          <div class="slide-tag">🏰 4-Dars: Parol Qal'asi</div>
+          <h2 class="slide-title">Parol Qal'angiz Qanchalik Mustahkam?</h2>
+          <p class="slide-desc">Parol kiriting yoki tayyorlarini tanlang. Haker buni necha soniyada buzishini ko'ring!</p>
+        </div>
+
+        <div class="password-lab-grid">
+          <div class="password-controls-box">
+            <h4 style="color: var(--cyan);">Parolni sinab ko'ring:</h4>
+            <div class="pwd-input-wrap">
+              <input type="text" id="custom-pwd-input" class="pwd-input-field" placeholder="Parol yozing..." value="123456" oninput="analyzePassword(this.value)">
+            </div>
+            <div style="font-size: 0.8rem; color: var(--text-dim);">Tayyor parollarni bosib ko'ring:</div>
+            <div class="pwd-presets">
+              <button class="btn-pwd-preset" onclick="setPresetPwd('123456')">❌ 123456</button>
+              <button class="btn-pwd-preset" onclick="setPresetPwd('qwerty')">❌ qwerty</button>
+              <button class="btn-pwd-preset" onclick="setPresetPwd('jasur2012')">⚠️ jasur2012</button>
+              <button class="btn-pwd-preset" onclick="setPresetPwd('Quyosh!2026')">🛡️ Quyosh!2026</button>
+              <button class="btn-pwd-preset" onclick="setPresetPwd('K1b3r_Q@lqon#99')">💎 K1b3r_Q@lqon#99</button>
+            </div>
+          </div>
+
+          <div class="castle-visual-box">
+            <div class="castle-icon" id="castle-icon">🛖</div>
+            <h3 id="castle-status-text" style="color: var(--crimson);">Somon Kulba (Juda Zaif!)</h3>
+            <div class="castle-meter-bar"><div class="castle-meter-fill" id="castle-meter-fill"></div></div>
+            <div style="font-size: 0.9rem; color: var(--text-bright); margin-top: 8px;">
+              ⏱️ Haker buzish vaqti: <strong id="pwd-crack-time" style="color: var(--crimson);">0.001 soniya!</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 5: IKKI BOSQICHLI HIMOYA (2FA) -->
+    <section class="slide" id="slide-5" data-slide="4">
+      <div class="slide-card">
+        <div class="slide-header">
+          <div class="slide-tag">🔐 5-Dars: 2FA Qalqoni</div>
+          <h2 class="slide-title">Ikki Bosqichli Himoya (2FA) Nima?</h2>
+          <p class="slide-desc">Haker parolingizni bilib olgan taqdirda ham, 2FA qalqoni hisobingizni qanday qutqaradi?</p>
+        </div>
+
+        <div class="twofa-stage-grid">
+          <div class="vault-box">
+            <div class="vault-door-icon" id="vault-icon">🚪🔒</div>
+            <h4 id="vault-status-title" style="color: var(--crimson);">Seyf Qulflangan!</h4>
+            <p id="vault-status-desc" style="font-size: 0.88rem; color: var(--text-dim); margin-top: 6px;">
+              Haker parolni kiritdi. 2FA bo'lmasa seyf darhol ochiladi!
+            </p>
+          </div>
+
+          <div class="twofa-toggle-card">
+            <h4 style="color: var(--amber); margin-bottom: 10px;">🛡️ 2FA Qalqonini boshqaring:</h4>
+            <p style="font-size: 0.9rem; color: var(--text-dim); margin-bottom: 14px;">
+              2FA (Two-Factor Authentication) — paroldan keyin telefoningizga keladigan maxfiy 6 xonali tasdiqlash kodidir.
+            </p>
+            <button class="btn-shield-cut" id="btn-test-2fa" onclick="test2FA()">
+              <span>📲</span> <span>2FA Qalqonini Yoqish va Sinash (+30 XP)</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 6: OCHIQ WI-FI VA VPN -->
+    <section class="slide" id="slide-6" data-slide="5">
+      <div class="slide-card">
+        <div class="slide-header">
+          <div class="slide-tag">📡 6-Dars: Wi-Fi Qopqonlari</div>
+          <h2 class="slide-title">Jamoat Wi-Fi Tarmoqlari Xavfi</h2>
+          <p class="slide-desc">Kafe va bog'lardagi parolsiz ochiq Wi-Fi larda hakerlar ma'lumotlarni qanday ushlaydi?</p>
+        </div>
+
+        <div class="wifi-stage-grid">
+          <div class="wifi-packet-stream">
+            <div style="font-size: 0.85rem; color: var(--cyan); font-weight: 700;">📶 Havodagi Ma'lumotlar Oqimi:</div>
+            <div class="packet-card" id="pkt-1"><span>🔑 Login / Parol:</span> <strong id="pkt-val-1">123456 (OCHIQ!)</strong></div>
+            <div class="packet-card" id="pkt-2"><span>💬 Yozishmalar:</span> <strong id="pkt-val-2">Salom, qayerdasan?</strong></div>
+            <div class="packet-card" id="pkt-3"><span>💳 Karta Raqami:</span> <strong id="pkt-val-3">8600 1234 5678</strong></div>
+          </div>
+
+          <div class="twofa-toggle-card">
+            <h4 style="color: var(--cyan); margin-bottom: 8px;">🛡️ VPN Shifrlash Qalqoni:</h4>
+            <p style="font-size: 0.88rem; color: var(--text-dim); margin-bottom: 14px;">
+              VPN ochiq tarmoqdagi barcha ma'lumotlarni temir qutiga solib, qulflab jo'natadi. Haker uni o'qiy olmaydi!
+            </p>
+            <button class="btn-shield-cut" id="btn-toggle-vpn" onclick="toggleVPN()">
+              <span>🛡️</span> <span>VPN Himoyasini Yoqish (+30 XP)</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 7: TROYAN VA VIRUSLAR -->
+    <section class="slide" id="slide-7" data-slide="6">
+      <div class="slide-card">
+        <div class="slide-header">
+          <div class="slide-tag">🦠 7-Dars: Troyan Otlari</div>
+          <h2 class="slide-title">Zararli Ilovalar va Troyanlar</h2>
+          <p class="slide-desc">"Tekin pullik o'yinlar" ichiga virus yashiringan bo'ladi. Ilovalarni skanerdan o'tkazing!</p>
+        </div>
+
+        <div class="trojan-grid">
+          <div class="apk-card" id="apk-1" onclick="scanApk(1)">
+            <div style="font-size: 2.5rem;">🎮</div>
+            <h4>GTA V Mobile (Tekin APK)</h4>
+            <p style="font-size: 0.8rem; color: var(--text-dim);">Telegram kanalidan yuklangan</p>
+            <div style="font-size: 0.8rem; color: var(--amber); margin-top: 6px;">👆 Skanerlash</div>
+          </div>
+          <div class="apk-card" id="apk-2" onclick="scanApk(2)">
+            <div style="font-size: 2.5rem;">📚</div>
+            <h4>Duolingo (Rasmiy)</h4>
+            <p style="font-size: 0.8rem; color: var(--text-dim);">Google Play Marketdan</p>
+            <div style="font-size: 0.8rem; color: var(--amber); margin-top: 6px;">👆 Skanerlash</div>
+          </div>
+          <div class="apk-card" id="apk-3" onclick="scanApk(3)">
+            <div style="font-size: 2.5rem;">💎</div>
+            <h4>Brawl Stars Gem Hack APK</h4>
+            <p style="font-size: 0.8rem; color: var(--text-dim);">Noma'lum saytdan</p>
+            <div style="font-size: 0.8rem; color: var(--amber); margin-top: 6px;">👆 Skanerlash</div>
+          </div>
+        </div>
+        <div id="apk-scan-result" style="margin-top: 14px; text-align: center; font-weight: 700; color: var(--cyan);"></div>
+      </div>
+    </section>
+
+    <!-- SLIDE 8: SMARTFON DETEKTIVI (5 SCENARIOS) -->
+    <section class="slide" id="slide-8" data-slide="7">
+      <div class="slide-card">
+        <div class="slide-header">
+          <div class="slide-tag">📱 8-Dars: Smartfon Detektivi</div>
+          <h2 class="slide-title">Kiber-Detektiv Sinovi: 5 ta Xabar</h2>
+          <p class="slide-desc">Kelgan xabarni tahlil qiling: <span class="highlight-crimson">Aldovmi</span> yoki <span class="highlight-cyan">Xavfsizmi</span>?</p>
+        </div>
+
+        <div class="phone-simulator-container">
+          <div class="phone-status-bar"><span>📡 4G</span><span id="phone-clock">15:30</span><span>🔋 99%</span></div>
+          <div class="message-card-wrapper">
+            <div class="sms-bubble">
+              <div style="display: flex; gap: 8px; margin-bottom: 6px;">
+                <span id="sms-sender-avatar" style="font-size: 1.3rem;">🤖</span>
+                <div><strong id="sms-sender-name">Telegram Bot</strong> <span id="sms-scenario-num" style="font-size: 0.72rem; color: var(--cyan);">(1/5)</span></div>
+              </div>
+              <div id="sms-body-text" style="font-size: 0.95rem;">"Siz 1000 Gem yutdingiz! 5 xonali SMS kodni yuboring!"</div>
+            </div>
+            <div class="scenario-feedback" id="scenario-feedback-box"></div>
+          </div>
+          <div class="decision-buttons">
+            <button class="btn-decision btn-danger-scam" onclick="handleDecision(true)"><span>🛑</span> ALDOV! (BLOKLASH)</button>
+            <button class="btn-decision btn-safe-trust" onclick="handleDecision(false)"><span>✅</span> XAVFSIZ! (ISHONISH)</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 9: KIBER-GIGIYENA 6 OLTIN QOIDASI -->
+    <section class="slide" id="slide-9" data-slide="8">
+      <div class="slide-card">
+        <div class="slide-header">
+          <div class="slide-tag">🛡️ 9-Dars: Kiber-Gigiyena</div>
+          <h2 class="slide-title">Kiber-Xavfsizlikning 6 Oltin Qoidasi</h2>
+          <p class="slide-desc">Barcha 6 ta qoidani bosib oching va 100% Kiber-Qalqonga ega bo'ling!</p>
+        </div>
+
+        <div class="hygiene-grid">
+          <div class="hygiene-card" onclick="flipHygiene(this, 15)"><h4>1. 🔑 SMS Kod</h4><p>Kodni hech kimga aytma!</p></div>
+          <div class="hygiene-card" onclick="flipHygiene(this, 15)"><h4>2. 🔒 Murakkab Parol</h4><p>Har xil belgilar qo'sh!</p></div>
+          <div class="hygiene-card" onclick="flipHygiene(this, 15)"><h4>3. 🚫 Begona Havola</h4><p>Shubhali linklarni ochma!</p></div>
+          <div class="hygiene-card" onclick="flipHygiene(this, 15)"><h4>4. 📲 2FA Himoyasi</h4><p>Ikki bosqichni yoqib qo'y!</p></div>
+          <div class="hygiene-card" onclick="flipHygiene(this, 15)"><h4>5. 📦 Rasmiy Do'kon</h4><p>Faqat Play Marketdan yukla!</p></div>
+          <div class="hygiene-card" onclick="flipHygiene(this, 15)"><h4>6. 👨‍👩‍👧 Kattalarga Ayt</h4><p>Shubha bo'lsa ota-onangga ayt!</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 10: YAKUNIY VIKTORINA & SERTIFIKAT -->
+    <section class="slide" id="slide-10" data-slide="9">
+      <div class="slide-card">
+        <div class="slide-header">
+          <div class="slide-tag">🏆 10-Dars: Yakuniy Sinov & Sertifikat</div>
+          <h2 class="slide-title">Kiber-Viktorina va Oltin Sertifikat</h2>
+          <p class="slide-desc">5 ta savolga to'g'ri javob bering va rasmiy <strong>Kiber-Detektiv</strong> Sertifikatiga ega bo'ling!</p>
+        </div>
+
+        <div class="quiz-container" id="quiz-questions-area">
+          <div class="quiz-question-box" id="qbox-1">
+            <div class="question-title"><span>1️⃣</span> Notanish raqamdan "Sovg'a yutdingiz" deb link kelsa, nima qilish kerak?</div>
+            <div class="question-options">
+              <button class="quiz-opt-btn" onclick="checkQuiz(1, 0, this)">A) Darhol ochib parolni kiritish</button>
+              <button class="quiz-opt-btn" onclick="checkQuiz(1, 1, this)">B) Ochmaslik, o'chirish va kattalarga aytish</button>
+              <button class="quiz-opt-btn" onclick="checkQuiz(1, 2, this)">C) Do'stlarga yuborish</button>
+            </div>
+          </div>
+          <div class="quiz-question-box" id="qbox-2">
+            <div class="question-title"><span>2️⃣</span> Qaysi manzil Telegramning ASL rasmiy sayti?</div>
+            <div class="question-options">
+              <button class="quiz-opt-btn" onclick="checkQuiz(2, 0, this)">A) http://telegraam-gift.cc</button>
+              <button class="quiz-opt-btn" onclick="checkQuiz(2, 1, this)">B) https://telegram.org</button>
+              <button class="quiz-opt-btn" onclick="checkQuiz(2, 2, this)">C) http://telegram-kod.biz</button>
+            </div>
+          </div>
+          <div class="quiz-question-box" id="qbox-3">
+            <div class="question-title"><span>3️⃣</span> Hakerlar eng ko'p qaysi hiyladan foydalanadi?</div>
+            <div class="question-options">
+              <button class="quiz-opt-btn" onclick="checkQuiz(3, 0, this)">A) She'r o'qib berish</button>
+              <button class="quiz-opt-btn" onclick="checkQuiz(3, 1, this)">B) Shoshiltirish va tekin boylik va'da qilish</button>
+              <button class="quiz-opt-btn" onclick="checkQuiz(3, 2, this)">C) Kompyuterga chizish</button>
+            </div>
+          </div>
+          <div class="quiz-question-box" id="qbox-4">
+            <div class="question-title"><span>4️⃣</span> SMS tasdiqlash kodini kimga aytish mumkin?</div>
+            <div class="question-options">
+              <button class="quiz-opt-btn" onclick="checkQuiz(4, 0, this)">A) Telegram botlarga</button>
+              <button class="quiz-opt-btn" onclick="checkQuiz(4, 1, this)">B) Hech kimga! Bu shaxsiy kalit</button>
+              <button class="quiz-opt-btn" onclick="checkQuiz(4, 2, this)">C) O'yin do'stiga</button>
+            </div>
+          </div>
+          <div class="quiz-question-box" id="qbox-5">
+            <div class="question-title"><span>5️⃣</span> Sayt xavfsizligini bildiruvchi belgi nima?</div>
+            <div class="question-options">
+              <button class="quiz-opt-btn" onclick="checkQuiz(5, 0, this)">A) Chiroyli ranglar</button>
+              <button class="quiz-opt-btn" onclick="checkQuiz(5, 1, this)">B) https:// va yashil qulf 🔒 belgisi</button>
+              <button class="quiz-opt-btn" onclick="checkQuiz(5, 2, this)">C) Tezkor taymer</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- CERTIFICATE DISPLAY -->
+        <div class="certificate-wrapper" id="certificate-wrapper">
+          <div style="font-size: 3rem; margin-bottom: 4px;">🏆</div>
+          <h3 style="font-size: 1.6rem; color: var(--amber); font-weight: 900;">KIBER QALQON HIMOYaChISI</h3>
+          <p style="font-size: 0.9rem; color: var(--text-dim); margin-bottom: 12px;">10 ta darsni muvaffaqiyatli yakunlaganlik to'g'risida diplom</p>
+
+          <div class="cert-controls-form">
+            <input type="text" id="cert-user-input" class="cert-input" placeholder="Ism Familiyangiz..." value="Jasur Alimov">
+            <input type="text" id="cert-school-input" class="cert-input" placeholder="Maktab va sinf..." value="5-maktab, 6-B sinf">
+            <select id="cert-avatar-select" class="cert-input" style="max-width: 160px;" onchange="updateCertName()">
+              <option value="🕵️‍♂️">🕵️‍♂️ Detektiv Bola</option>
+              <option value="🕵️‍♀️">🕵️‍♀️ Detektiv Qiz</option>
+              <option value="🤖">🤖 Kiber-Robot</option>
+              <option value="🛡️">🛡️ Oltin Qalqon</option>
+            </select>
+            <button class="btn-nav btn-nav-primary" onclick="updateCertName()">Yangilash</button>
+          </div>
+
+          <div class="cert-preview-card" id="printable-cert">
+            <div style="display: flex; justify-content: space-between; border-bottom: 1px solid rgba(255,209,102,0.3); padding-bottom: 6px; font-size: 0.8rem; color: var(--cyan);">
+              <span>🛡️ KIBER-QALQON AKADEMIYASI</span>
+              <span style="color: var(--amber);">SERIYA: #KQ-2026-9842</span>
+            </div>
+            <div style="font-size: 2.5rem; margin: 6px 0;" id="cert-avatar-display">🕵️‍♂️</div>
+            <div class="cert-user-name" id="cert-name-display">Jasur Alimov</div>
+            <div style="font-size: 0.95rem; color: var(--cyan); font-weight: 700; margin-bottom: 6px;" id="cert-school-display">5-maktab, 6-B sinf o'quvchisi</div>
+            <div class="cert-rank-tag">🏆 OLIY TOIFALI KIBER-DETEKTIV</div>
+            <p style="font-size: 0.9rem; color: var(--text-bright); max-width: 580px; margin: 0 auto 10px;">
+              Fishing, soxta saytlar, 2FA, Wi-Fi xavflari va viruslarni aniqlash bo'yicha 10 ta sinovdan a'lo natija bilan o'tdi!
+            </p>
+            <div style="display: flex; justify-content: space-around; font-size: 0.82rem; color: var(--amber); border-top: 1px solid rgba(255,255,255,0.15); padding-top: 8px;">
+              <span>📅 Sana: <strong id="cert-date">2026-yil</strong></span>
+              <span>⚡ Jami XP: <strong id="cert-xp-score">500 XP</strong></span>
+              <span>🛡️ Daraja: <strong>100% A'LO</strong></span>
+            </div>
+          </div>
+
+          <div class="cert-actions-bar">
+            <button class="btn-action-gold" onclick="downloadCertificateAsImage()">
+              <span>📥</span> <span>Sertifikatni HD Rasm (PNG) qilib Yuklab Olish</span>
+            </button>
+            <button class="btn-nav btn-nav-primary" onclick="window.print()">
+              <span>🖨️</span> <span>Chop Etish / PDF Saqlash</span>
+            </button>
+            <button class="btn-nav" onclick="restartPlatform()">
+              <span>🔄</span> <span>Kursni Qaytadan Boshlash</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ==========================================================================
+       BOTTOM NAVIGATION BAR
+       ========================================================================== -->
+  <footer class="app-footer">
+    <button class="btn-nav" id="btn-prev" onclick="prevSlide()" disabled>
+      <span>⬅️</span> <span>Oldingi</span>
+    </button>
+
+    <div class="nav-dots" id="nav-dots-container">
+      <div class="nav-dot active" onclick="goToSlide(0)" title="1-Dars"></div>
+      <div class="nav-dot" onclick="goToSlide(1)" title="2-Dars"></div>
+      <div class="nav-dot" onclick="goToSlide(2)" title="3-Dars"></div>
+      <div class="nav-dot" onclick="goToSlide(3)" title="4-Dars"></div>
+      <div class="nav-dot" onclick="goToSlide(4)" title="5-Dars"></div>
+      <div class="nav-dot" onclick="goToSlide(5)" title="6-Dars"></div>
+      <div class="nav-dot" onclick="goToSlide(6)" title="7-Dars"></div>
+      <div class="nav-dot" onclick="goToSlide(7)" title="8-Dars"></div>
+      <div class="nav-dot" onclick="goToSlide(8)" title="9-Dars"></div>
+      <div class="nav-dot" onclick="goToSlide(9)" title="10-Dars"></div>
+    </div>
+
+    <div class="slide-counter">
+      <span id="current-slide-num">1</span> / 10-dars
+    </div>
+
+    <button class="btn-nav btn-nav-primary" id="btn-next" onclick="nextSlide()">
+      <span>Keyingi</span> <span>➡️</span>
+    </button>
+  </footer>
+
+  <!-- ==========================================================================
+       JAVASCRIPT LOGIC
+       ========================================================================== -->
+  <script>
+    const state = {
+      currentSlide: 0,
+      totalSlides: 10,
+      xp: 0,
+      soundEnabled: true,
+      slideCompleted: new Array(10).fill(false),
+      slide3Clues: new Set(),
+      currentSiteTab: 1,
+      vpnActive: false,
+      scenarioIndex: 0,
+      quizAnswers: [null, null, null, null, null],
+      hackerMaskRevealed: false
+    };
+
+    let audioCtx = null;
+    function initAudio() {
+      if (!audioCtx) {
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        if (AudioContextClass) audioCtx = new AudioContextClass();
+      }
+      if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+    }
+
+    function playTone(freq, type = 'sine', duration = 0.15, gainVal = 0.1) {
+      if (!state.soundEnabled) return;
+      initAudio();
+      if (!audioCtx) return;
+      try {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+        gain.gain.setValueAtTime(gainVal, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + duration);
+      } catch (e) {}
+    }
+
+    const Sound = {
+      click() { playTone(600, 'sine', 0.08, 0.08); },
+      pop() { playTone(850, 'triangle', 0.1, 0.1); },
+      success() {
+        if (!state.soundEnabled) return;
+        initAudio();
+        if (!audioCtx) return;
+        const now = audioCtx.currentTime;
+        [523.25, 659.25, 783.99, 1046.50].forEach((freq, idx) => {
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.frequency.setValueAtTime(freq, now + idx * 0.08);
+          gain.gain.setValueAtTime(0.08, now + idx * 0.08);
+          gain.gain.exponentialRampToValueAtTime(0.0001, now + idx * 0.08 + 0.25);
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.start(now + idx * 0.08);
+          osc.stop(now + idx * 0.08 + 0.25);
+        });
+      },
+      error() {
+        if (!state.soundEnabled) return;
+        initAudio();
+        if (!audioCtx) return;
+        const now = audioCtx.currentTime;
+        [220, 180].forEach((freq, idx) => {
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(freq, now + idx * 0.12);
+          gain.gain.setValueAtTime(0.12, now + idx * 0.12);
+          gain.gain.exponentialRampToValueAtTime(0.0001, now + idx * 0.12 + 0.18);
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.start(now + idx * 0.12);
+          osc.stop(now + idx * 0.12 + 0.18);
+        });
+      },
+      slice() {
+        playTone(1000, 'sawtooth', 0.2, 0.15);
+      },
+      fanfare() {
+        if (!state.soundEnabled) return;
+        initAudio();
+        if (!audioCtx) return;
+        const now = audioCtx.currentTime;
+        [{ f: 523.25, t: 0 }, { f: 659.25, t: 0.12 }, { f: 783.99, t: 0.24 }, { f: 1046.50, t: 0.36 }].forEach(n => {
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(n.f, now + n.t);
+          gain.gain.setValueAtTime(0.12, now + n.t);
+          gain.gain.exponentialRampToValueAtTime(0.0001, now + n.t + 0.35);
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.start(now + n.t);
+          osc.stop(now + n.t + 0.35);
+        });
+      }
+    };
+
+    function addXP(points) {
+      state.xp += points;
+      const counterEl = document.getElementById('xp-counter');
+      const certXpEl = document.getElementById('cert-xp-score');
+      if (counterEl) counterEl.textContent = `${state.xp} XP`;
+      if (certXpEl) certXpEl.textContent = `${state.xp} XP`;
+    }
+
+    function updateSlideView() {
+      document.querySelectorAll('.slide').forEach((s, idx) => s.classList.toggle('active', idx === state.currentSlide));
+      document.querySelectorAll('.nav-dot').forEach((d, idx) => {
+        d.classList.toggle('active', idx === state.currentSlide);
+        d.classList.toggle('completed', state.slideCompleted[idx]);
+      });
+      document.getElementById('top-progress-fill').style.width = `${((state.currentSlide + 1) / state.totalSlides) * 100}%`;
+      document.getElementById('current-slide-num').textContent = state.currentSlide + 1;
+      document.getElementById('btn-prev').disabled = state.currentSlide === 0;
+      const nextBtn = document.getElementById('btn-next');
+      nextBtn.innerHTML = (state.currentSlide === state.totalSlides - 1) ? '<span>Yakunlandi</span> <span>🎉</span>' : '<span>Keyingi</span> <span>➡️</span>';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function goToSlide(index) {
+      if (index >= 0 && index < state.totalSlides) {
+        Sound.pop();
+        state.currentSlide = index;
+        updateSlideView();
+      }
+    }
+
+    function nextSlide() {
+      if (state.currentSlide < state.totalSlides - 1) {
+        state.slideCompleted[state.currentSlide] = true;
+        goToSlide(state.currentSlide + 1);
+      }
+    }
+
+    function prevSlide() {
+      if (state.currentSlide > 0) goToSlide(state.currentSlide - 1);
+    }
+
+    /* SLIDE 1 */
+    document.getElementById('btn-toggle-mask').addEventListener('click', () => {
+      initAudio();
+      state.hackerMaskRevealed = !state.hackerMaskRevealed;
+      const stage = document.getElementById('character-stage');
+      if (state.hackerMaskRevealed) {
+        Sound.error();
+        stage.classList.add('hacker-mode');
+        document.getElementById('char-friendly-group').style.display = 'none';
+        document.getElementById('char-hacker-group').style.display = 'block';
+        document.getElementById('character-speech').innerHTML = '😈 <strong>"Aslida men haker!"</strong> Parolingizni o\'g\'irlamoqchiman!';
+        document.getElementById('toggle-mask-text').textContent = 'Do\'st Qiyofasiga Qaytish';
+        addXP(20);
+      } else {
+        Sound.pop();
+        stage.classList.remove('hacker-mode');
+        document.getElementById('char-friendly-group').style.display = 'block';
+        document.getElementById('char-hacker-group').style.display = 'none';
+        document.getElementById('character-speech').innerHTML = '"Salom do\'stim! Senga tekin o\'yin sovg\'am bor! 🎁"';
+        document.getElementById('toggle-mask-text').textContent = 'Haqiqiy Qiyofani Ochish!';
+      }
+    });
+
+    function unlockTrigger(card, xp) {
+      if (!card.classList.contains('unlocked')) {
+        Sound.success();
+        card.classList.add('unlocked');
+        addXP(xp);
+      }
+    }
+
+    /* SLIDE 2: PHISHING */
+    const baitData = {
+      1: { title: "🎮 1. O'yin Fishingi", desc: "O'yin login-parolini soxta saytga kiritishingiz bilan qahramonlaringiz o'g'irlanadi!" },
+      2: { title: "💳 2. Bank Fishingi", desc: "500,000 so'm yordam puli bahonasida kartangizning bor pullari yechib olinadi!" },
+      3: { title: "📦 3. UzPost Fishingi", desc: "Posilka yetkazish uchun 12,000 so'm to'lang deb kartadagi pullarni o'g'irlashadi!" },
+      4: { title: "🎁 4. Telegram Premium Fishingi", desc: "Telegram tasdiqlash kodini kiritishingiz bilan profilingiz haker qo'liga o'tadi!" }
+    };
+    let selectedBaitEl = null;
+
+    function inspectBait(id, el) {
+      Sound.pop();
+      document.querySelectorAll('.bait-item').forEach(b => b.classList.remove('selected'));
+      el.classList.add('selected');
+      selectedBaitEl = el;
+      document.getElementById('scanner-idle-msg').style.display = 'none';
+      const content = document.getElementById('scanner-active-content');
+      content.classList.add('show');
+      document.getElementById('scanner-bait-title').textContent = baitData[id].title;
+      document.getElementById('scanner-bait-desc').textContent = baitData[id].desc;
+      const btn = document.getElementById('btn-cut-line');
+      btn.disabled = false;
+      btn.style.background = 'linear-gradient(135deg, var(--emerald-dark), var(--cyan))';
+      btn.innerHTML = '<span>🛡️</span> <span>Lazer Qalqon bilan Qarmoqni Kesish! (+30 XP)</span>';
+    }
+
+    function cutPhishingLine() {
+      Sound.slice();
+      setTimeout(() => Sound.success(), 200);
+      if (selectedBaitEl) selectedBaitEl.classList.add('cleared');
+      addXP(30);
+      createBurstConfetti();
+      const btn = document.getElementById('btn-cut-line');
+      btn.innerHTML = '<span>✅</span> <span>Tuzoq Qalqon Bilan Kesildi!</span>';
+      btn.style.background = 'var(--emerald)';
+      btn.disabled = true;
+    }
+
+    /* SLIDE 3: DOMAIN DETECTIVE */
+    const siteData = {
+      1: {
+        realUrl: "https://instagram.com",
+        fakeUrl: "http://instagrarn-security.net",
+        fakeBanner: "DIQQAT: Hisob 5 daqiqada o'chiriladi!",
+        realInput1: "Login yoki telefon",
+        realInput2: "Maxfiy parol (••••••••)",
+        realBtn: "Kirish",
+        fakeInput1: "Login yoki telefon raqami",
+        fakeInput2: "Maxfiy parolingizni kiriting",
+        fakeBtn: "TEZDA HISOBNI TIKLASH"
+      },
+      2: {
+        realUrl: "https://telegram.org",
+        fakeUrl: "http://telegraam-gift.cc",
+        fakeBanner: "TEZKOR: 1 Yillik Premium sovg'angizni oling!",
+        realInput1: "Telefon raqamingiz (+998...)",
+        realInput2: "Tasdiqlash kodi (•••••)",
+        realBtn: "Kodni yuborish",
+        fakeInput1: "Telefon raqamingiz",
+        fakeInput2: "SMS orqali kelgan 5 xonali kod",
+        fakeBtn: "PREMIUMNIKINI OLISH"
+      },
+      3: {
+        realUrl: "https://click.uz",
+        fakeUrl: "http://cl1ck-uzcard-pay.net",
+        fakeBanner: "KARTA: 100,000 so'm keshbekni yechib oling!",
+        realInput1: "Telefon yoki karta raqami",
+        realInput2: "Click PIN-kod (••••)",
+        realBtn: "Davom etish",
+        fakeInput1: "Karta raqami (8600...)",
+        fakeInput2: "Kartaning maxfiy PIN / CVV kodi",
+        fakeBtn: "PULNI QABUL QILISH"
+      }
+    };
+
+    function switchSiteTab(id, el) {
+      Sound.pop();
+      document.querySelectorAll('.site-tab-btn').forEach(b => b.classList.remove('active'));
+      el.classList.add('active');
+      const d = siteData[id];
+      document.getElementById('real-browser-url').textContent = d.realUrl;
+      document.getElementById('fake-browser-url').textContent = d.fakeUrl;
+      document.getElementById('fake-banner-text').textContent = d.fakeBanner;
+      document.getElementById('real-input-1').textContent = d.realInput1;
+      document.getElementById('real-input-2').textContent = d.realInput2;
+      document.getElementById('real-btn').textContent = d.realBtn;
+      document.getElementById('fake-input-1').textContent = d.fakeInput1;
+      document.getElementById('fake-input-2').textContent = d.fakeInput2;
+      document.getElementById('fake-btn').textContent = d.fakeBtn;
+    }
+
+    // Live Fake Countdown Timer for Slide 3
+    let fakeSecondsLeft = 299; // 04:59
+    function updateFakeTimer() {
+      if (fakeSecondsLeft > 0) fakeSecondsLeft--;
+      const m = String(Math.floor(fakeSecondsLeft / 60)).padStart(2, '0');
+      const s = String(fakeSecondsLeft % 60).padStart(2, '0');
+      const timerEl = document.getElementById('fake-timer-display');
+      if (timerEl) timerEl.textContent = `⏳ ${m}:${s}`;
+    }
+    setInterval(updateFakeTimer, 1000);
+
+    function findClue(num, el) {
+      if (!state.slide3Clues.has(num)) {
+        Sound.success();
+        state.slide3Clues.add(num);
+        el.classList.add('found');
+        el.textContent = '✓';
+        const pill = document.getElementById(`pill-${num}`);
+        if (pill) pill.classList.add('active');
+        document.getElementById('clues-found-count').textContent = state.slide3Clues.size;
+        addXP(20);
+        if (state.slide3Clues.size === 4) { Sound.fanfare(); createBurstConfetti(); }
+      }
+    }
+
+    /* SLIDE 4: PASSWORD CASTLE */
+    function setPresetPwd(pwd) {
+      document.getElementById('custom-pwd-input').value = pwd;
+      analyzePassword(pwd);
+    }
+
+    function analyzePassword(pwd) {
+      const icon = document.getElementById('castle-icon');
+      const status = document.getElementById('castle-status-text');
+      const fill = document.getElementById('castle-meter-fill');
+      const time = document.getElementById('pwd-crack-time');
+
+      if (!pwd || pwd.length < 6) {
+        icon.textContent = '🛖';
+        status.textContent = 'Somon Kulba (Juda Zaif!)';
+        status.style.color = 'var(--crimson)';
+        fill.style.width = '15%';
+        fill.style.background = 'var(--crimson)';
+        time.textContent = '0.001 soniya!';
+        time.style.color = 'var(--crimson)';
+      } else if (pwd.length < 8 || /^[a-zA-Z0-9]+$/.test(pwd) && !/[!@#$%^&*]/.test(pwd)) {
+        icon.textContent = '🪵';
+        status.textContent = 'Yog\'och Uy (O\'rtacha)';
+        status.style.color = 'var(--amber)';
+        fill.style.width = '50%';
+        fill.style.background = 'var(--amber)';
+        time.textContent = '2 daqiqa!';
+        time.style.color = 'var(--amber)';
+        Sound.pop();
+      } else {
+        icon.textContent = '🏰';
+        status.textContent = 'Po\'lat Qal\'a (Buzilmas!)';
+        status.style.color = 'var(--emerald)';
+        fill.style.width = '100%';
+        fill.style.background = 'var(--emerald)';
+        time.textContent = '500 YIL!';
+        time.style.color = 'var(--emerald)';
+        Sound.success();
+        addXP(25);
+      }
+    }
+
+    /* SLIDE 5: 2FA VAULT */
+    function test2FA() {
+      Sound.success();
+      const vaultIcon = document.getElementById('vault-icon');
+      const title = document.getElementById('vault-status-title');
+      const desc = document.getElementById('vault-status-desc');
+      const btn = document.getElementById('btn-test-2fa');
+
+      vaultIcon.textContent = '🛡️🔐🚪';
+      title.textContent = '2FA Himoyasi Yoqildi!';
+      title.style.color = 'var(--emerald)';
+      desc.innerHTML = '✅ Haker parolni bilsa ham, telefoningizga kelgan 6 xonali SMS kodsiz hisobingizga kira olmaydi!';
+      btn.innerHTML = '<span>✅</span> <span>2FA Faol! Hisobingiz Himoyalangan!</span>';
+      btn.style.background = 'var(--emerald)';
+      btn.disabled = true;
+      addXP(30);
+      createBurstConfetti();
+    }
+
+    /* SLIDE 6: WI-FI & VPN */
+    function toggleVPN() {
+      state.vpnActive = !state.vpnActive;
+      const btn = document.getElementById('btn-toggle-vpn');
+      const p1 = document.getElementById('pkt-1');
+      const p2 = document.getElementById('pkt-2');
+      const p3 = document.getElementById('pkt-3');
+
+      if (state.vpnActive) {
+        Sound.success();
+        p1.className = 'packet-card secured';
+        p2.className = 'packet-card secured';
+        p3.className = 'packet-card secured';
+        document.getElementById('pkt-val-1').textContent = '🔒 [SHIFRLANGAN HASH]';
+        document.getElementById('pkt-val-2').textContent = '🔒 [SHIFRLANGAN XABAR]';
+        document.getElementById('pkt-val-3').textContent = '🔒 [SHIFRLANGAN TOKEN]';
+        btn.innerHTML = '<span>✅</span> <span>VPN Shifrlash Yoqilgan!</span>';
+        btn.style.background = 'var(--emerald)';
+        addXP(30);
+        createBurstConfetti();
+      } else {
+        Sound.pop();
+        p1.className = 'packet-card';
+        p2.className = 'packet-card';
+        p3.className = 'packet-card';
+        document.getElementById('pkt-val-1').textContent = '123456 (OCHIQ!)';
+        document.getElementById('pkt-val-2').textContent = 'Salom, qayerdasan?';
+        document.getElementById('pkt-val-3').textContent = '8600 1234 5678';
+        btn.innerHTML = '<span>🛡️</span> <span>VPN Himoyasini Yoqish</span>';
+      }
+    }
+
+    /* SLIDE 7: TROJAN APK SCANNER */
+    function scanApk(id) {
+      const res = document.getElementById('apk-scan-result');
+      const card = document.getElementById(`apk-${id}`);
+
+      if (id === 1) {
+        Sound.error();
+        card.className = 'apk-card infected';
+        res.innerHTML = '🚨 <strong>GTA V APK:</strong> Ichida "Trojan.Spyware" virusi topildi! Parollarni o\'g\'irlaydi!';
+        res.style.color = 'var(--crimson)';
+      } else if (id === 2) {
+        Sound.success();
+        card.className = 'apk-card clean';
+        res.innerHTML = '✅ <strong>Duolingo:</strong> Toza va xavfsiz! Rasmiy Google Play do\'konidan yuklangan.';
+        res.style.color = 'var(--emerald)';
+        addXP(20);
+      } else if (id === 3) {
+        Sound.error();
+        card.className = 'apk-card infected';
+        res.innerHTML = '🚨 <strong>Gem Hack APK:</strong> Soxta dastur! Telefon kamerasi va kontaktlarini o\'g\'irlaydi!';
+        res.style.color = 'var(--crimson)';
+      }
+    }
+
+    /* SLIDE 8: SMARTPHONE 5 SCENARIOS */
+    const scenarios = [
+      { sender: "🤖 BrawlStars_FreeGems_Bot", badge: "(1/5)", avatar: "🤖", body: `"Siz 1000 ta Gem yutdingiz! 5 xonali SMS tasdiqlash kodini shu yerga yuboring!"`, isScam: true, exp: "To'g'ri! SMS kodni HECH KIMGA aytib bo'lmaydi." },
+      { sender: "📦 UzPost-Express", badge: "(2/5)", avatar: "📦", body: `"Posilkangiz yetkazish bo'limida. Kuryer to'lovi (12,000 so'm) uchun link: http://uzpost-kuryer.cc/pay"`, isScam: true, exp: "To'g'ri! 'uzpost-kuryer.cc' — bu soxta fishing havola." },
+      { sender: "🧑‍🎓 Jasur (Sinfdosh)", badge: "(3/5)", avatar: "🧑‍🎓", body: `"Salom! Ertangi matematika darsidan 45-misol yechimini ko'rsata olasanmi?"`, isScam: false, exp: "To'g'ri! Oddiy do'stona savol, hech qanday xavf yo'q." },
+      { sender: "🏆 Instagram_Prize", badge: "(4/5)", avatar: "🏆", body: `"iPhone 15 yutdingiz! Karta raqamingiz va orqasidagi 3 xonali CVV kodini yozing!"`, isScam: true, exp: "To'g'ri! Kartaning orqasidagi CVV kodni bilgan odam bor pulni yechib oladi!" },
+      { sender: "🏫 eMaktab Xabarnomasi", badge: "(5/5)", avatar: "🏫", body: `"Choraklik baholaringiz eMaktab tizimiga yuklandi. Kundalik.com ilovasida ko'rishingiz mumkin."`, isScam: false, exp: "To'g'ri! Maktab tizimining rasmiy xavfsiz eslatmasi." }
+    ];
+
+    let scenarioLocked = false;
+    function handleDecision(userScam) {
+      if (scenarioLocked || state.scenarioIndex >= scenarios.length) return;
+      scenarioLocked = true;
+      const cur = scenarios[state.scenarioIndex];
+      const box = document.getElementById('scenario-feedback-box');
+      const isOk = (userScam === cur.isScam);
+
+      if (isOk) {
+        Sound.success();
+        addXP(25);
+        box.className = 'scenario-feedback feedback-correct';
+        box.innerHTML = `🎉 <strong>To'g'ri!</strong> ${cur.exp}`;
+      } else {
+        Sound.error();
+        box.className = 'scenario-feedback feedback-wrong';
+        box.innerHTML = `⚠️ <strong>Xato!</strong> Bu aslida ${cur.isScam ? 'hakerlik aldovi edi!' : 'xavfsiz xabar edi.'}`;
+      }
+
+      setTimeout(() => {
+        scenarioLocked = false;
+        if (state.scenarioIndex < scenarios.length - 1) {
+          state.scenarioIndex++;
+          const s = scenarios[state.scenarioIndex];
+          document.getElementById('sms-sender-name').textContent = s.sender;
+          document.getElementById('sms-scenario-num').textContent = s.badge;
+          document.getElementById('sms-sender-avatar').textContent = s.avatar;
+          document.getElementById('sms-body-text').textContent = s.body;
+          box.className = 'scenario-feedback';
+          box.innerHTML = '';
+        } else {
+          box.className = 'scenario-feedback feedback-correct';
+          box.innerHTML = `🏆 <strong>Barcha 5 ta xabar tekshirildi!</strong>`;
+          createBurstConfetti();
+        }
+      }, 1800);
+    }
+
+    /* SLIDE 9: CYBER HYGIENE */
+    function flipHygiene(el, xp) {
+      if (!el.classList.contains('flipped')) {
+        Sound.success();
+        el.classList.add('flipped');
+        addXP(xp);
+      }
+    }
+
+    /* SLIDE 10: QUIZ & CERTIFICATE */
+    const quizCorrect = { 1: 1, 2: 1, 3: 1, 4: 1, 5: 1 };
+    function checkQuiz(q, opt, btn) {
+      const box = document.getElementById(`qbox-${q}`);
+      const btns = box.querySelectorAll('.quiz-opt-btn');
+      if (state.quizAnswers[q - 1] !== null) return;
+      btns.forEach(b => b.disabled = true);
+
+      if (opt === quizCorrect[q]) {
+        Sound.success();
+        btn.classList.add('correct');
+        addXP(30);
+        state.quizAnswers[q - 1] = true;
+      } else {
+        Sound.error();
+        btn.classList.add('wrong');
+        btns[quizCorrect[q]].classList.add('correct');
+        state.quizAnswers[q - 1] = false;
+      }
+
+      if (state.quizAnswers.every(a => a !== null)) setTimeout(() => showCertificate(), 800);
+    }
+
+    function showCertificate() {
+      Sound.fanfare();
+      createBurstConfetti();
+      document.getElementById('quiz-questions-area').style.display = 'none';
+      document.getElementById('certificate-wrapper').classList.add('show');
+      const d = new Date();
+      document.getElementById('cert-date').textContent = `${d.getDate()}-${d.getMonth() + 1}-${d.getFullYear()}-yil`;
+      updateCertName();
+    }
+
+    function openCertificateDirectly() {
+      goToSlide(9);
+      showCertificate();
+    }
+
+    function updateCertName() {
+      Sound.pop();
+      const name = document.getElementById('cert-user-input').value.trim() || 'Jasur Alimov';
+      const school = document.getElementById('cert-school-input').value.trim() || '6-maktab o\'quvchisi';
+      const av = document.getElementById('cert-avatar-select').value || '🕵️‍♂️';
+
+      document.getElementById('cert-name-display').textContent = name;
+      document.getElementById('cert-school-display').textContent = school;
+      document.getElementById('cert-avatar-display').textContent = av;
+    }
+
+    /* 1-CLICK HD CANVAS PNG CERTIFICATE */
+    function downloadCertificateAsImage() {
+      Sound.success();
+      const canvas = document.createElement('canvas');
+      canvas.width = 1600;
+      canvas.height = 1100;
+      const ctx = canvas.getContext('2d');
+
+      const bgGrad = ctx.createLinearGradient(0, 0, 1600, 1100);
+      bgGrad.addColorStop(0, '#0a1428');
+      bgGrad.addColorStop(0.5, '#040814');
+      bgGrad.addColorStop(1, '#0c1b36');
+      ctx.fillStyle = bgGrad;
+      ctx.fillRect(0, 0, 1600, 1100);
+
+      ctx.strokeStyle = 'rgba(0, 242, 254, 0.06)';
+      for (let x = 0; x < 1600; x += 40) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, 1100); ctx.stroke(); }
+      for (let y = 0; y < 1100; y += 40) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(1600, y); ctx.stroke(); }
+
+      ctx.strokeStyle = '#ffd166'; ctx.lineWidth = 12; ctx.strokeRect(50, 50, 1500, 1000);
+      ctx.strokeStyle = '#00f2fe'; ctx.lineWidth = 3; ctx.strokeRect(70, 70, 1460, 960);
+
+      ctx.fillStyle = '#00f2fe'; ctx.font = 'bold 26px sans-serif'; ctx.textAlign = 'center';
+      ctx.fillText('🛡️ KIBER-QALQON XALQARO TA\'LIMIY AKADEMIYASI', 800, 140);
+
+      ctx.fillStyle = '#ffd166'; ctx.font = '900 58px sans-serif';
+      ctx.fillText('KIBER QALQON HIMOYACHISI', 800, 230);
+
+      ctx.fillStyle = '#94a3b8'; ctx.font = '600 24px sans-serif';
+      ctx.fillText('Kiber-xavfsizlik va axborot himoyasi bo\'yicha 10 bosqichli diplom', 800, 280);
+
+      const avatarChar = document.getElementById('cert-avatar-select').value || '🕵️‍♂️';
+      ctx.font = '90px sans-serif'; ctx.fillText(avatarChar, 800, 390);
+
+      const name = document.getElementById('cert-user-input').value.trim() || 'Jasur Alimov';
+      ctx.fillStyle = '#ffffff'; ctx.font = '900 60px sans-serif'; ctx.fillText(name, 800, 480);
+
+      const school = document.getElementById('cert-school-input').value.trim() || '6-maktab o\'quvchisi';
+      ctx.fillStyle = '#00f2fe'; ctx.font = 'bold 30px sans-serif'; ctx.fillText(school, 800, 540);
+
+      ctx.fillStyle = 'rgba(255, 209, 102, 0.2)'; ctx.fillRect(520, 580, 560, 50);
+      ctx.strokeStyle = '#ffd166'; ctx.lineWidth = 2; ctx.strokeRect(520, 580, 560, 50);
+      ctx.fillStyle = '#ffd166'; ctx.font = 'bold 26px sans-serif'; ctx.fillText('🏆 OLIY TOIFALI KIBER-DETEKTIV', 800, 615);
+
+      ctx.fillStyle = '#e2e8f0'; ctx.font = '500 24px sans-serif';
+      ctx.fillText('Fishing, soxta saytlar, parollar, 2FA, Wi-Fi va troyanlarni aniqlash', 800, 690);
+      ctx.fillText('bo\'yicha 10 ta amaliy sinovdan a\'lo darajada o\'tdi!', 800, 730);
+
+      const d = new Date();
+      const dateStr = `${d.getDate()}-${d.getMonth() + 1}-${d.getFullYear()}-yil`;
+      const xpScore = document.getElementById('cert-xp-score').textContent || '500 XP';
+
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(120, 810); ctx.lineTo(1480, 810); ctx.stroke();
+      ctx.fillStyle = '#ffd166'; ctx.font = 'bold 24px sans-serif'; ctx.textAlign = 'left';
+      ctx.fillText(`📅 Berilgan Sana: ${dateStr}`, 140, 870);
+      ctx.textAlign = 'center'; ctx.fillText(`⚡ Umumiy Ball: ${xpScore}`, 800, 870);
+      ctx.textAlign = 'right'; ctx.fillText('🛡️ Seriya: #KQ-2026-9842', 1460, 870);
+
+      const link = document.createElement('a');
+      link.download = `Kiber_Qalqon_Sertifikat_${name.replace(/\s+/g, '_')}.png`;
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    }
+
+    function restartPlatform() {
+      Sound.pop();
+      state.currentSlide = 0;
+      state.xp = 0;
+      state.slide3Clues.clear();
+      state.scenarioIndex = 0;
+      state.quizAnswers = [null, null, null, null, null];
+      document.getElementById('quiz-questions-area').style.display = 'flex';
+      document.getElementById('certificate-wrapper').classList.remove('show');
+      document.querySelectorAll('.quiz-opt-btn').forEach(b => { b.disabled = false; b.classList.remove('correct', 'wrong'); });
+      document.querySelectorAll('.trigger-card').forEach(c => c.classList.remove('unlocked'));
+      document.querySelectorAll('.detective-clue-marker').forEach(m => { m.classList.remove('found'); m.textContent = m.className.match(/clue-marker-(\d)/)[1]; });
+      document.querySelectorAll('.clue-pill').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.hygiene-card').forEach(h => h.classList.remove('flipped'));
+      document.querySelectorAll('.apk-card').forEach(a => a.className = 'apk-card');
+      document.getElementById('clues-found-count').textContent = '0';
+      document.getElementById('xp-counter').textContent = '0 XP';
+      goToSlide(0);
+    }
+
+    /* CONTROLS */
+    document.getElementById('sound-toggle-btn').addEventListener('click', () => {
+      initAudio();
+      state.soundEnabled = !state.soundEnabled;
+      document.getElementById('sound-icon').textContent = state.soundEnabled ? '🔊' : '🔇';
+      if (state.soundEnabled) Sound.pop();
+    });
+
+    document.getElementById('fullscreen-btn').addEventListener('click', () => {
+      Sound.pop();
+      if (!document.fullscreenElement) document.documentElement.requestFullscreen().catch(() => {});
+      else document.exitFullscreen();
+    });
+
+    document.getElementById('reset-btn').addEventListener('click', () => {
+      if (confirm("Kiber-Qalqon kursini qaytadan boshlamoqchimisiz?")) restartPlatform();
+    });
+
+    window.addEventListener('keydown', (e) => {
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') return;
+      if (e.key === 'ArrowRight' || e.key === ' ') nextSlide();
+      else if (e.key === 'ArrowLeft') prevSlide();
+    });
+
+    /* PARTICLES & CONFETTI */
+    const pCanvas = document.getElementById('particles-canvas');
+    const pCtx = pCanvas.getContext('2d');
+    let particles = [];
+    function resizePCanvas() { pCanvas.width = window.innerWidth; pCanvas.height = window.innerHeight; }
+    window.addEventListener('resize', resizePCanvas);
+    resizePCanvas();
+    for (let i = 0; i < 35; i++) {
+      particles.push({ x: Math.random() * pCanvas.width, y: Math.random() * pCanvas.height, r: Math.random() * 2 + 1, vx: (Math.random() - 0.5) * 0.4, vy: (Math.random() - 0.5) * 0.4, alpha: Math.random() * 0.5 + 0.2 });
+    }
+    function animateParticles() {
+      pCtx.clearRect(0, 0, pCanvas.width, pCanvas.height);
+      pCtx.fillStyle = '#00f2fe';
+      particles.forEach(p => {
+        p.x += p.vx; p.y += p.vy;
+        if (p.x < 0) p.x = pCanvas.width; if (p.x > pCanvas.width) p.x = 0;
+        if (p.y < 0) p.y = pCanvas.height; if (p.y > pCanvas.height) p.y = 0;
+        pCtx.beginPath(); pCtx.globalAlpha = p.alpha; pCtx.arc(p.x, p.y, p.r, 0, Math.PI * 2); pCtx.fill();
+      });
+      requestAnimationFrame(animateParticles);
+    }
+    animateParticles();
+
+    const cCanvas = document.getElementById('confetti-canvas');
+    const cCtx = cCanvas.getContext('2d');
+    let confettiPieces = [];
+    function resizeCCanvas() { cCanvas.width = window.innerWidth; cCanvas.height = window.innerHeight; }
+    window.addEventListener('resize', resizeCCanvas);
+    resizeCCanvas();
+
+    function createBurstConfetti() {
+      const colors = ['#00f2fe', '#9d4edd', '#00f5a0', '#ffd166', '#ff2a85'];
+      for (let i = 0; i < 70; i++) {
+        confettiPieces.push({ x: cCanvas.width / 2, y: cCanvas.height / 2, vx: (Math.random() - 0.5) * 16, vy: (Math.random() - 0.7) * 16, size: Math.random() * 8 + 4, color: colors[Math.floor(Math.random() * colors.length)], rotation: Math.random() * 360, vRot: (Math.random() - 0.5) * 10, alpha: 1 });
+      }
+    }
+    function animateConfetti() {
+      cCtx.clearRect(0, 0, cCanvas.width, cCanvas.height);
+      for (let i = confettiPieces.length - 1; i >= 0; i--) {
+        const cp = confettiPieces[i];
+        cp.x += cp.vx; cp.y += cp.vy; cp.vy += 0.3; cp.rotation += cp.vRot; cp.alpha -= 0.015;
+        if (cp.alpha <= 0) { confettiPieces.splice(i, 1); continue; }
+        cCtx.save(); cCtx.globalAlpha = cp.alpha; cCtx.translate(cp.x, cp.y); cCtx.rotate((cp.rotation * Math.PI) / 180); cCtx.fillStyle = cp.color; cCtx.fillRect(-cp.size / 2, -cp.size / 2, cp.size, cp.size); cCtx.restore();
+      }
+      requestAnimationFrame(animateConfetti);
+    }
+    animateConfetti();
+
+    function updateClock() {
+      const now = new Date();
+      const el = document.getElementById('phone-clock');
+      if (el) el.textContent = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    updateSlideView();
+  </script>
+</body>
+</html>
